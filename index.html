@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Campus Tour | KMIT Mokshsa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('public/background.jpg') center/cover;
+            min-height: 100vh;
+            color: rgb(255, 255, 255);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #4CAF50;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 150px 0;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .tour-button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .primary-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .tour-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.5);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #333;
+            margin: 5% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #4CAF50;
+        }
+
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover .img-caption {
+            transform: translateY(0);
+        }
+
+        /* Tour selection modal */
+        .tour-selection {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .tour-selection-content {
+            background-color: #333;
+            margin: 10% auto;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .tour-option {
+            background: #444;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tour-option:hover {
+            background: #4CAF50;
+        }
+
+        .tour-option h3 {
+            margin-bottom: 10px;
+        }
+
+        /* New styles for guided tour and schedule visit modals */
+        .guided-tour-modal, .schedule-visit-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .guided-tour-content, .schedule-visit-content {
+            background-color: #333;
+            margin: 10% auto;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #444;
+            color: white;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+        }
+
+        .tour-type-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tour-type-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #444;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tour-type-option:hover {
+            background: #555;
+        }
+
+        .tour-type-option input {
+            margin-right: 15px;
+        }
+
+        .tour-details {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        /* Admin Login Modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .login-content {
+            background-color: #333;
+            margin: 10% auto;
+            padding: 30px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #45a049;
+        }
+
+        /* Admin Dashboard */
+        .admin-dashboard {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #222;
+            z-index: 2000;
+            color: white;
+            overflow: auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #111;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .admin-nav a:hover {
+            background: #4CAF50;
+        }
+
+        .admin-content {
+            padding: 20px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .recent-activity {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #444;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav {
+                display: none;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tour-button {
+                width: 80%;
+                margin: 10px 0;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .gallery-img {
+                height: 150px;
+            }
+            
+            .tour-selection-content, .guided-tour-content, .schedule-visit-content {
+                width: 95%;
+                margin: 20% auto;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">KMIT MOKSHSA</div>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#tours">Tours</a>
+                <a href="#contact">Contact</a>
+                <a href="#" id="adminLoginBtn" style="color: red;">Admin Login</a>
+            </nav>
+        </header>
+
+        <div class="hero">
+            <h1>Explore Our Campus in 3D</h1>
+            <p>Experience our university like never before with immersive virtual reality tours</p>
+            
+            <div class="button-container">
+                <button id="virtualTourBtn" class="tour-button primary-btn">Start Virtual Tour</button>
+                <button id="guidedTourBtn" class="tour-button secondary-btn">Guided Tour</button>
+                <button id="campusGalleryBtn" class="tour-button secondary-btn">Campus Gallery</button>
+                <button id="scheduleVisitBtn" class="tour-button secondary-btn">Schedule Visit</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 KMIT Mokshsa. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </footer>
+    </div>
+
+    <!-- Campus Gallery Modal -->
+    <div id="galleryModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="gallery-title">Campus Gallery</h2>
+            <div class="gallery-grid" id="galleryContainer">
+                <!-- Gallery items will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Virtual Tour Selection Modal -->
+    <div id="tourSelectionModal" class="tour-selection">
+        <div class="tour-selection-content">
+            <span class="close">&times;</span>
+            <h2>Choose Your Tour Experience</h2>
+            
+            <div class="tour-option" id="fullCampusTour">
+                <h3>Full Campus Tour</h3>
+                <p>Explore our entire campus with highlights of all major facilities</p>
+            </div>
+            
+            <div class="tour-option" id="academicTour">
+                <h3>Academic Facilities Tour</h3>
+                <p>Focus on classrooms, labs, and learning spaces</p>
+            </div>
+            
+            <div class="tour-option" id="sportsTour">
+                <h3>Athletics & Recreation Tour</h3>
+                <p>Explore our sports facilities and recreational areas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guided Tour Modal -->
+    <div id="guidedTourModal" class="guided-tour-modal">
+        <div class="guided-tour-content">
+            <span class="close">&times;</span>
+            <h2>Schedule a Guided Tour</h2>
+            
+            <div class="tour-type-selector">
+                <label class="tour-type-option">
+                    <input type="radio" name="tourType" value="inPerson" checked> 
+                    <div>
+                        <h3>In-Person Guided Tour</h3>
+                        <p>Walk through campus with one of our student ambassadors</p>
+                    </div>
+                </label>
+                
+                <label class="tour-type-option">
+                    <input type="radio" name="tourType" value="virtual"> 
+                    <div>
+                        <h3>Virtual Guided Tour</h3>
+                        <p>Live virtual tour with a guide via video conference</p>
+                    </div>
+                </label>
+            </div>
+            
+            <div class="tour-details">
+                <div class="form-group">
+                    <label for="tourDate">Preferred Date</label>
+                    <input type="date" id="tourDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tourTime">Preferred Time</label>
+                    <select id="tourTime" required>
+                        <option value="">Select a time</option>
+                        <option value="9:00 AM">9:00 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="1:00 PM">1:00 PM</option>
+                        <option value="3:00 PM">3:00 PM</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="groupSize">Group Size</label>
+                    <select id="groupSize" required>
+                        <option value="1">1 person</option>
+                        <option value="2-5">2-5 people</option>
+                        <option value="6-10">6-10 people</option>
+                        <option value="10+">10+ people</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specialRequests">Special Requests</label>
+                    <textarea id="specialRequests" placeholder="Any special accommodations or requests"></textarea>
+                </div>
+                
+                <button class="submit-btn" id="submitGuidedTour">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Visit Modal -->
+    <div id="scheduleVisitModal" class="schedule-visit-modal">
+        <div class="schedule-visit-content">
+            <span class="close">&times;</span>
+            <h2>Schedule Your Campus Visit</h2>
+            
+            <div class="form-group">
+                <label for="visitDate">Visit Date</label>
+                <input type="date" id="visitDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="visitType">Visit Type</label>
+                <select id="visitType" required>
+                    <option value="">Select visit type</option>
+                    <option value="prospective">Prospective Student Visit</option>
+                    <option value="transfer">Transfer Student Visit</option>
+                    <option value="family">Family Visit</option>
+                    <option value="group">Group Visit</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="visitorName">Full Name</label>
+                <input type="text" id="visitorName" required placeholder="Your full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="visitorEmail">Email</label>
+                <input type="email" id="visitorEmail" required placeholder="Your email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="visitorPhone">Phone Number</label>
+                <input type="tel" id="visitorPhone" placeholder="Your phone number">
+            </div>
+            
+            <div class="form-group">
+                <label for="visitNotes">Additional Notes</label>
+                <textarea id="visitNotes" placeholder="Any special requests or information about your visit"></textarea>
+            </div>
+            
+            <button class="submit-btn" id="submitVisitRequest">Schedule Visit</button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-content">
+            <span class="close">&times;</span>
+            <h2 class="login-title">Admin Login</h2>
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" required placeholder="Enter admin username">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" required placeholder="Enter password">
+                </div>
+                <button type="button" id="loginSubmit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <div class="admin-nav">
+                <a href="#" class="dashboard-link">Dashboard</a>
+                <a href="#" class="tours-link">Tour Requests</a>
+                <a href="#" class="visits-link">Scheduled Visits</a>
+                <button class="logout-btn" id="adminLogout">Logout</button>
+            </div>
+        </div>
+        <div class="admin-content">
+            <div id="dashboardContent">
+                <h3>Overview</h3>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Virtual Tours</h3>
+                        <p id="virtualToursCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Guided Tours</h3>
+                        <p id="guidedToursCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Scheduled Visits</h3>
+                        <p id="scheduledVisitsCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Gallery Views</h3>
+                        <p id="galleryViewsCount">0</p>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="activityLog">
+                        <!-- Activity items will be added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="toursContent" style="display: none;">
+                <h3>Tour Requests</h3>
+                <div id="tourRequestsList">
+                    <!-- Tour requests will be added here -->
+                </div>
+            </div>
+            
+            <div id="visitsContent" style="display: none;">
+                <h3>Scheduled Visits</h3>
+                <div id="scheduledVisitsList">
+                    <!-- Scheduled visits will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API base URL
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        const campusPhotos = [
+            { src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1', caption: 'Main Campus Building' },
+            { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f', caption: 'Student Center' },
+            { src: 'https://images.unsplash.com/photo-1541178735493-479c1a27ed24', caption: 'Library' },
+            { src: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644', caption: 'Classrooms' },
+            { src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1', caption: 'Sports Complex' },
+            { src: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644', caption: 'Auditorium' },
+            { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f', caption: 'Cafeteria' },
+            { src: 'https://images.unsplash.com/photo-1541178735493-479c1a27ed24', caption: 'Research Labs' }
+        ];
+
+        // Admin data storage
+        let adminData = {
+            virtualTours: 0,
+            guidedTours: 0,
+            scheduledVisits: 0,
+            galleryViews: 0,
+            tourRequests: [],
+            visitRequests: [],
+            activityLog: []
+        };
+
+        // JWT token for admin
+        let authToken = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all buttons
+            const virtualTourBtn = document.getElementById('virtualTourBtn');
+            const guidedTourBtn = document.getElementById('guidedTourBtn');
+            const campusGalleryBtn = document.getElementById('campusGalleryBtn');
+            const scheduleVisitBtn = document.getElementById('scheduleVisitBtn');
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const loginSubmitBtn = document.getElementById('loginSubmit');
+            const adminLogoutBtn = document.getElementById('adminLogout');
+            
+            // Get all modals and close buttons
+            const galleryModal = document.getElementById('galleryModal');
+            const galleryContainer = document.getElementById('galleryContainer');
+            const closeBtns = document.querySelectorAll('.close');
+            
+            const tourSelectionModal = document.getElementById('tourSelectionModal');
+            const tourOptions = document.querySelectorAll('.tour-option');
+            
+            // New modals
+            const guidedTourModal = document.getElementById('guidedTourModal');
+            const scheduleVisitModal = document.getElementById('scheduleVisitModal');
+            const loginModal = document.getElementById('loginModal');
+            const adminDashboard = document.getElementById('adminDashboard');
+            
+            // Admin dashboard elements
+            const dashboardContent = document.getElementById('dashboardContent');
+            const toursContent = document.getElementById('toursContent');
+            const visitsContent = document.getElementById('visitsContent');
+            const dashboardLink = document.querySelector('.dashboard-link');
+            const toursLink = document.querySelector('.tours-link');
+            const visitsLink = document.querySelector('.visits-link');
+            
+            // Add event listeners
+            virtualTourBtn.addEventListener('click', startVirtualTour);
+            guidedTourBtn.addEventListener('click', openGuidedTourModal);
+            campusGalleryBtn.addEventListener('click', openCampusGallery);
+            scheduleVisitBtn.addEventListener('click', openScheduleVisitModal);
+            adminLoginBtn.addEventListener('click', openLoginModal);
+            loginSubmitBtn.addEventListener('click', attemptAdminLogin);
+            adminLogoutBtn.addEventListener('click', adminLogout);
+            
+            // Admin navigation
+            dashboardLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardContent.style.display = 'block';
+                toursContent.style.display = 'none';
+                visitsContent.style.display = 'none';
+                fetchDashboardStats();
+            });
+            
+            toursLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardContent.style.display = 'none';
+                toursContent.style.display = 'block';
+                visitsContent.style.display = 'none';
+                fetchTourRequests();
+            });
+            
+            visitsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardContent.style.display = 'none';
+                toursContent.style.display = 'none';
+                visitsContent.style.display = 'block';
+                fetchVisitRequests();
+            });
+            
+            // Close modal buttons
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    galleryModal.style.display = 'none';
+                    tourSelectionModal.style.display = 'none';
+                    guidedTourModal.style.display = 'none';
+                    scheduleVisitModal.style.display = 'none';
+                    loginModal.style.display = 'none';
+                });
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === galleryModal) {
+                    galleryModal.style.display = 'none';
+                }
+                if (event.target === tourSelectionModal) {
+                    tourSelectionModal.style.display = 'none';
+                }
+                if (event.target === guidedTourModal) {
+                    guidedTourModal.style.display = 'none';
+                }
+                if (event.target === scheduleVisitModal) {
+                    scheduleVisitModal.style.display = 'none';
+                }
+                if (event.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            });
+            
+            // API Helper Functions
+            async function makeApiRequest(url, method = 'GET', body = null, requiresAuth = false) {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (requiresAuth && authToken) {
+                    headers['x-auth-token'] = authToken;
+                }
+                
+                const options = {
+                    method,
+                    headers
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}${url}`, options);
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'API request failed');
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API request error:', error);
+                    throw error;
+                }
+            }
+            
+            // Admin login functionality
+            function openLoginModal() {
+                loginModal.style.display = 'block';
+            }
+            
+            async function attemptAdminLogin() {
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+                
+                try {
+                    const data = await makeApiRequest('/admin/login', 'POST', { username, password });
+                    authToken = data.token;
+                    loginModal.style.display = 'none';
+                    adminDashboard.style.display = 'block';
+                    fetchDashboardStats();
+                } catch (error) {
+                    alert('Invalid credentials. Please try again.');
+                }
+            }
+            
+            function adminLogout() {
+                authToken = null;
+                adminDashboard.style.display = 'none';
+            }
+            
+            async function fetchDashboardStats() {
+                try {
+                    const stats = await makeApiRequest('/admin/dashboard', 'GET', null, true);
+                    
+                    document.getElementById('virtualToursCount').textContent = stats.virtualTours;
+                    document.getElementById('guidedToursCount').textContent = stats.guidedTours;
+                    document.getElementById('scheduledVisitsCount').textContent = stats.scheduledVisits;
+                    document.getElementById('galleryViewsCount').textContent = stats.galleryViews;
+                    
+                    // For demo purposes, we'll still use the local activity log
+                    updateActivityLog();
+                } catch (error) {
+                    console.error('Failed to fetch dashboard stats:', error);
+                }
+            }
+            
+            async function fetchTourRequests() {
+                try {
+                    const tours = await makeApiRequest('/tours', 'GET', null, true);
+                    updateTourRequestsView(tours);
+                } catch (error) {
+                    console.error('Failed to fetch tour requests:', error);
+                }
+            }
+            
+            async function fetchVisitRequests() {
+                try {
+                    const visits = await makeApiRequest('/visits', 'GET', null, true);
+                    updateVisitRequestsView(visits);
+                } catch (error) {
+                    console.error('Failed to fetch visit requests:', error);
+                }
+            }
+            
+            function updateActivityLog() {
+                // Update activity log
+                const activityLog = document.getElementById('activityLog');
+                activityLog.innerHTML = '';
+                
+                adminData.activityLog.slice().reverse().forEach(activity => {
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `<strong>${activity.type}</strong>: ${activity.details} <span style="color: #aaa; float: right;">${activity.timestamp}</span>`;
+                    activityLog.appendChild(activityItem);
+                });
+            }
+            
+            function updateTourRequestsView(tours = []) {
+                const tourRequestsList = document.getElementById('tourRequestsList');
+                tourRequestsList.innerHTML = '';
+                
+                if (tours.length === 0) {
+                    tourRequestsList.innerHTML = '<p>No tour requests yet.</p>';
+                    return;
+                }
+                
+                tours.forEach((request, index) => {
+                    const requestItem = document.createElement('div');
+                    requestItem.className = 'activity-item';
+                    requestItem.innerHTML = `
+                        <h4>${request.tourType === 'inPerson' ? 'In-Person' : 'Virtual'} Tour Request</h4>
+                        <p><strong>Date:</strong> ${new Date(request.date).toLocaleDateString()} at ${request.time}</p>
+                        <p><strong>Group Size:</strong> ${request.groupSize}</p>
+                        ${request.specialRequests ? `<p><strong>Requests:</strong> ${request.specialRequests}</p>` : ''}
+                        <p style="color: #aaa; font-size: 0.9rem;">Submitted on ${new Date(request.createdAt).toLocaleString()}</p>
+                    `;
+                    tourRequestsList.appendChild(requestItem);
+                });
+            }
+            
+            function updateVisitRequestsView(visits = []) {
+                const visitsList = document.getElementById('scheduledVisitsList');
+                visitsList.innerHTML = '';
+                
+                if (visits.length === 0) {
+                    visitsList.innerHTML = '<p>No scheduled visits yet.</p>';
+                    return;
+                }
+                
+                visits.forEach((request, index) => {
+                    const requestItem = document.createElement('div');
+                    requestItem.className = 'activity-item';
+                    requestItem.innerHTML = `
+                        <h4>${request.visitorName} - ${request.visitType}</h4>
+                        <p><strong>Date:</strong> ${new Date(request.visitDate).toLocaleDateString()}</p>
+                        <p><strong>Contact:</strong> ${request.visitorEmail} ${request.visitorPhone ? `| ${request.visitorPhone}` : ''}</p>
+                        ${request.visitNotes ? `<p><strong>Notes:</strong> ${request.visitNotes}</p>` : ''}
+                        <p style="color: #aaa; font-size: 0.9rem;">Submitted on ${new Date(request.createdAt).toLocaleString()}</p>
+                    `;
+                    visitsList.appendChild(requestItem);
+                });
+            }
+            
+            function logActivity(type, details) {
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+                adminData.activityLog.push({ type, details, timestamp });
+                
+                if (adminDashboard.style.display === 'block') {
+                    updateActivityLog();
+                }
+            }
+            
+            // Virtual Tour functionality
+            function startVirtualTour() {
+                adminData.virtualTours++;
+                logActivity('Virtual Tour', 'Started virtual tour');
+                tourSelectionModal.style.display = 'block';
+            }
+            
+            // Guided Tour functionality
+            function openGuidedTourModal() {
+                guidedTourModal.style.display = 'block';
+                
+                // Set default date to tomorrow
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const formattedDate = tomorrow.toISOString().split('T')[0];
+                document.getElementById('tourDate').value = formattedDate;
+            }
+            
+            // Schedule Visit functionality
+            function openScheduleVisitModal() {
+                scheduleVisitModal.style.display = 'block';
+                
+                // Set default date to tomorrow
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const formattedDate = tomorrow.toISOString().split('T')[0];
+                document.getElementById('visitDate').value = formattedDate;
+            }
+            
+            // Form submissions
+            document.getElementById('submitGuidedTour').addEventListener('click', async function() {
+                const tourType = document.querySelector('input[name="tourType"]:checked').value;
+                const tourDate = document.getElementById('tourDate').value;
+                const tourTime = document.getElementById('tourTime').value;
+                const groupSize = document.getElementById('groupSize').value;
+                const specialRequests = document.getElementById('specialRequests').value;
+                
+                if (!tourDate || !tourTime) {
+                    alert('Please select both date and time for your tour');
+                    return;
+                }
+                
+                try {
+                    await makeApiRequest('/tours', 'POST', {
+                        tourType,
+                        date: tourDate,
+                        time: tourTime,
+                        groupSize,
+                        specialRequests
+                    });
+                    
+                    adminData.guidedTours++;
+                    logActivity('Guided Tour', `${tourType === 'inPerson' ? 'In-Person' : 'Virtual'} tour scheduled for ${tourDate} at ${tourTime}`);
+                    
+                    alert(`Thank you! Your ${tourType === 'inPerson' ? 'in-person' : 'virtual'} guided tour request for ${tourDate} at ${tourTime} has been received. We'll contact you to confirm.`);
+                    guidedTourModal.style.display = 'none';
+                } catch (error) {
+                    alert('Failed to submit tour request. Please try again.');
+                }
+            });
+            
+            document.getElementById('submitVisitRequest').addEventListener('click', async function() {
+                const visitDate = document.getElementById('visitDate').value;
+                const visitType = document.getElementById('visitType').value;
+                const visitorName = document.getElementById('visitorName').value;
+                const visitorEmail = document.getElementById('visitorEmail').value;
+                const visitorPhone = document.getElementById('visitorPhone').value;
+                const visitNotes = document.getElementById('visitNotes').value;
+                
+                if (!visitDate || !visitType || !visitorName || !visitorEmail) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                try {
+                    await makeApiRequest('/visits', 'POST', {
+                        visitDate,
+                        visitType,
+                        visitorName,
+                        visitorEmail,
+                        visitorPhone,
+                        visitNotes
+                    });
+                    
+                    adminData.scheduledVisits++;
+                    logActivity('Scheduled Visit', `${visitorName} scheduled a ${visitType} visit for ${visitDate}`);
+                    
+                    alert(`Thank you, ${visitorName}! Your campus visit request for ${visitDate} has been received. A confirmation will be sent to ${visitorEmail}.`);
+                    scheduleVisitModal.style.display = 'none';
+                } catch (error) {
+                    alert('Failed to submit visit request. Please try again.');
+                }
+            });
+            
+            // Tour selection options
+            tourOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const tourType = this.id;
+                    launchSpecificTour(tourType);
+                });
+            });
+            
+            function launchSpecificTour(tourType) {
+                let tourName = '';
+                switch(tourType) {
+                    case 'fullCampusTour':
+                        tourName = 'Full Campus Tour';
+                        break;
+                    case 'academicTour':
+                        tourName = 'Academic Facilities Tour';
+                        break;
+                    case 'sportsTour':
+                        tourName = 'Athletics & Recreation Tour';
+                        break;
+                }
+                
+                tourSelectionModal.style.display = 'none';
+                alert(`Starting ${tourName}... Loading immersive experience`);
+             
+                setTimeout(() => {
+                    console.log(`Loading ${tourType} experience...`);
+                    showMockTourInterface(tourType);
+                }, 1000);
+            }
+            
+            function showMockTourInterface(tourType) {
+                const mockTour = document.createElement('div');
+                mockTour.id = 'mockTour';
+                mockTour.style.position = 'fixed';
+                mockTour.style.top = '0';
+                mockTour.style.left = '0';
+                mockTour.style.width = '100%';
+                mockTour.style.height = '100%';
+                mockTour.style.backgroundColor = '#000';
+                mockTour.style.zIndex = '3000';
+                mockTour.style.display = 'flex';
+                mockTour.style.flexDirection = 'column';
+                mockTour.style.justifyContent = 'center';
+                mockTour.style.alignItems = 'center';
+                mockTour.style.color = 'white';
+                mockTour.style.fontSize = '2rem';
+                
+                mockTour.innerHTML = `
+                    <h2>${tourType === 'fullCampusTour' ? 'Full Campus Tour' : 
+                          tourType === 'academicTour' ? 'Academic Facilities Tour' : 
+                          'Athletics & Recreation Tour'}</h2>
+                    <p style="font-size: 1rem; margin-top: 20px;">This would be an interactive 3D tour in a real implementation</p>
+                    <div style="margin-top: 30px; display: flex; gap: 20px;">
+                        <button id="exitTourBtn" style="padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Exit Tour</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(mockTour);
+                
+                document.getElementById('exitTourBtn').addEventListener('click', function() {
+                    document.body.removeChild(mockTour);
+                });
+            }
+            
+            // Campus Gallery functionality
+            async function openCampusGallery() {
+                try {
+                    const galleryItems = await makeApiRequest('/gallery');
+                    
+                    // Populate gallery
+                    galleryContainer.innerHTML = '';
+                    galleryItems.forEach(item => {
+                        const galleryItem = document.createElement('div');
+                        galleryItem.className = 'gallery-item';
+                        galleryItem.innerHTML = `
+                            <img src="${item.imageUrl}" alt="${item.caption}" class="gallery-img">
+                            <div class="img-caption">${item.caption}</div>
+                        `;
+                        galleryContainer.appendChild(galleryItem);
+                    });
+                    
+                    adminData.galleryViews++;
+                    logActivity('Gallery View', 'Opened campus gallery');
+                    galleryModal.style.display = 'block';
+                } catch (error) {
+                    console.error('Failed to load gallery:', error);
+                    // Fallback to local data if API fails
+                    galleryContainer.innerHTML = '';
+                    campusPhotos.forEach(photo => {
+                        const galleryItem = document.createElement('div');
+                        galleryItem.className = 'gallery-item';
+                        galleryItem.innerHTML = `
+                            <img src="${photo.src}" alt="${photo.caption}" class="gallery-img">
+                            <div class="img-caption">${photo.caption}</div>
+                        `;
+                        galleryContainer.appendChild(galleryItem);
+                    });
+                    
+                    adminData.galleryViews++;
+                    logActivity('Gallery View', 'Opened campus gallery (using fallback data)');
+                    galleryModal.style.display = 'block';
+                }
+            }
+            
+            // Initialize with some sample data
+            function initializeSampleData() {
+                const now = new Date();
+                const yesterday = new Date(now);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const twoDaysAgo = new Date(now);
+                twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+                
+                adminData.virtualTours = 42;
+                adminData.guidedTours = 18;
+                adminData.scheduledVisits = 27;
+                adminData.galleryViews = 156;
+                
+                adminData.tourRequests = [
+                    {
+                        tourType: 'inPerson',
+                        date: now.toISOString().split('T')[0],
+                        time: '11:00 AM',
+                        groupSize: '2-5',
+                        specialRequests: 'Need wheelchair accessibility',
+                        timestamp: now.toLocaleString()
+                    },
+                    {
+                        tourType: 'virtual',
+                        date: yesterday.toISOString().split('T')[0],
+                        time: '3:00 PM',
+                        groupSize: '6-10',
+                        specialRequests: '',
+                        timestamp: yesterday.toLocaleString()
+                    }
+                ];
+                
+                adminData.visitRequests = [
+                    {
+                        visitDate: now.toISOString().split('T')[0],
+                        visitType: 'prospective',
+                        visitorName: 'ravinder nayak',
+                        visitorEmail: 'ravi@example.com',
+                        visitorPhone: '555-123-4567',
+                        visitNotes: 'Interested in Computer Science program',
+                        timestamp: now.toLocaleString()
+                    },
+                    {
+                        visitDate: yesterday.toISOString().split('T')[0],
+                        visitType: 'transfer',
+                        visitorName: 'Sarah Johnson',
+                        visitorEmail: 'sarah@example.com',
+                        visitorPhone: '',
+                        visitNotes: '',
+                        timestamp: yesterday.toLocaleString()
+                    }
+                ];
+                
+                adminData.activityLog = [
+                    {
+                        type: 'Virtual Tour',
+                        details: 'Started full campus tour',
+                        timestamp: now.toLocaleString()
+                    },
+                    {
+                        type: 'Scheduled Visit',
+                        details: 'John Smith scheduled a prospective visit',
+                        timestamp: now.toLocaleString()
+                    },
+                    {
+                        type: 'Guided Tour',
+                        details: 'In-Person tour scheduled for ' + now.toISOString().split('T')[0] + ' at 11:00 AM',
+                        timestamp: yesterday.toLocaleString()
+                    },
+                    {
+                        type: 'Gallery View',
+                        details: 'Viewed campus gallery',
+                        timestamp: twoDaysAgo.toLocaleString()
+                    }
+                ];
+            }
+            
+            // Initialize with sample data
+            initializeSampleData();
+        });
+    </script>
+</body>
+</html>
